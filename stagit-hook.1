@@ -1,0 +1,47 @@
+.Dd October 19, 2025
+.Dt STAGIT-HOOK 1
+.Os
+.Sh NAME
+.Nm stagit-hook
+.Nd Git hook to automatically run stagit
+.Sh SYNOPSIS
+.Nm
+.Nm
+.Ar install repo Op Ar ...
+.Nm
+.Ar reindex repo Op Ar ...
+.Sh DESCRIPTION
+When used without any arguments,
+the
+.Nm
+utility behaves like a post-update git hook.  When run with the
+.Ar install
+command, a post-update hook is installed in the given repositories
+and an initial set of stagit files are generated.  To force reindexing
+of a repository, you may use the
+.Ar reindex
+command.
+.Pp
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa /etc/stagit-hook
+.Xr stagit-hook 5
+configuration file.
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Sh EXAMPLES
+.Pp
+Install stagit hook in the
+.Qq example
+repository:
+.Pp
+.Dl $ stagit-hook install ./example
+.Pp
+.Sh SEE ALSO
+.Xr stagit 1 ,
+.Xr stagit-index 1 ,
+.Xr githooks 5 ,
+.Xr stagit-hook 5
+.Sh AUTHORS
+.An Jacob R. Edwards Aq Mt jacob@jacobedwards.org

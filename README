@@ -1,0 +1,7 @@
+stagit-hook
+===========
+
+The stagit-hook project provides an easy interface to maintain
+post-update git hooks to run
+[stagit](https://codemadness.org/git/stagit/log.html)(*1*) on your
+public repositories.

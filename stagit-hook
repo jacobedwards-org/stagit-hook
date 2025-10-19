@@ -1,0 +1,88 @@
+#!/bin/sh
+
+err() {
+	echo "$@" 1>&2
+	exit 1
+}
+
+# Lists repositories we want in the index, sorted by most recent
+# commit. While it's not the best way, any repository with the
+# post-update hook is listed. (So long as you haven't changed the
+# hooks directory.)
+hooked() (
+	find "$HOME" -maxdepth 3 -path '*/hooks/post-update' | sed s./hooks/post-update$.. |
+		while read dir
+	do (
+		cd "$dir"
+		git show -s --format="%ct	$dir" ||
+			err "$dir: Unable to get repo information"
+	) done | sort -rn | cut -f2-
+)
+
+index() {
+	hooked | xargs stagit-index > "$basedir"/index.html
+}
+
+repo() {
+	abs="$(readlink -f "$1")"
+	nam="$(basename "$abs")"
+	dir="$basedir"/"$nam" 
+	mkdir -p "$dir"
+	cd "$dir"
+	stagit -u "$baseurl" "$abs"
+}
+
+loadconfig() {
+	if test -f "$rc"
+	then
+		while read key val
+		do
+			case $key in
+			(basedir) basedir="$val" ;;
+			(baseurl) baseurl="$val" ;;
+			(*) err 'Invalid configuration'
+			esac
+		done < "$rc"
+	fi
+}
+
+rc=/etc/stagit-hook
+host="$(hostname)"
+basedir=/var/www/htdocs/"$host"/projects/
+baseurl=https://"$host"/projects/
+
+loadconfig
+
+if test $# -gt 0
+then
+	case "$1" in
+	(install)
+		shift
+		stagit-hook-install "$@"
+		"$0" reindex "$@"
+		exit ;;
+	(reindex)
+		shift
+		for d in "$@"
+		do
+			repo "$d"
+		done
+		index
+		exit ;;
+	(*)
+		err 'usage: stagit-hook [repo ...]'
+	esac
+fi
+
+printenv GIT_DIR >/dev/null ||
+	err 'error: Expected to be run as a git hook'
+
+err="$(mktemp -t stagit-hook-errXXXXXX)"
+trap 'rm -f "$err"' EXIT
+{
+	repo "$GIT_DIR"
+	index
+} > "$err" 2>&1 || {
+	logger -t stagit-hook -p error < "$err"
+	exit 1
+}

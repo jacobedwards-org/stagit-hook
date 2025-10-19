@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for r in "${@:?usage: stagit-hook-install repo [...]}"
+do
+	cp "$(which stagit-hook-hook)" "$r"/hooks/post-update
+done

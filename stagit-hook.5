@@ -1,0 +1,30 @@
+.Dd October 19, 2025
+.Dt STAGIT-HOOK 5
+.Os
+.Sh NAME
+.Nm stagit-hook
+.Nd stagit-hook configuration file
+.Sh DESCRIPTION
+.Nm
+reads configuration from
+.Pa /etc/stagit-hook
+allowing you to set the
+.Va baseurl
+and
+.Va basedir
+variables.
+Here is an example configuration file:
+.Bd -literal
+baseurl https://example.com/git
+basedir /var/www/htdocs/example.com/git
+.Ed
+.Sh FILES
+.Bl -tag -width Ds
+.It Pa /etc/stagit-hook
+Contains configuration data for
+.Xr stagit-hook 1 .
+.El
+.Sh SEE ALSO
+.Xr stagit-hook 1
+.Sh AUTHORS
+.An Jacob R. Edwards Aq Mt jacob@jacobedwards.org
