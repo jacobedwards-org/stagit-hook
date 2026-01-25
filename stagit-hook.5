@@ -28,6 +28,20 @@ Specifies the file that repositories must contain to be indexed.
 Defaults to
 .Qq refs .
 .El
+.Bl -tag -width Ds
+.It Ic styledir Ar path
+Use the
+.Pa favicon.png ,
+.Pa logo.png ,
+and
+.Pa style.css
+files from
+.Ar path
+to style repository and index pages as described in
+.Xr stagit 1
+and
+.Xr stagit-index 1 .
+.El
 .Sh FILES
 .Bl -tag -width Ds
 .It Pa /etc/stagit-hook
@@ -43,6 +57,8 @@ basedir /var/www/htdocs/example.com/git
 hasfile git-daemon-export-ok
 .Ed
 .Sh SEE ALSO
-.Xr stagit-hook 1
+.Xr stagit 1 ,
+.Xr stagit-hook 1 ,
+.Xr stagit-index 1
 .Sh AUTHORS
 .An Jacob R. Edwards Aq Mt jacob@jacobedwards.org

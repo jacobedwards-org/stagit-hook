@@ -19,9 +19,32 @@ hooked() (
 ${repodir%/}/"
 )
 
+loadfile() {
+	case "$1" in
+	(link) ;;
+	(copy) link=false ;;
+	(*) err "$1: link or copy"
+	esac
+	test "$2" -ef "$3" ||
+	    ${link:-ln -f "$2" "$3"} ||
+	    cat "$2" > "$3"
+}
+
+loadstyle() {
+	c="${1:?requried}"
+	s="$2"
+	d="${3:-.}"
+
+	for f in style.css logo.png favicon.png
+	do
+		loadfile "$c" "$s/$f" "$d/$f"
+	done
+}
+
 index() (
 	IFS='
 '
+	test -n "$styledir" && loadstyle copy "$styledir" "$basedir"
 	stagit-index $(hooked) > "$basedir"/index.html
 )
 
@@ -31,6 +54,7 @@ repo() {
 	dir="$basedir"/"$nam" 
 	mkdir -p "$dir"
 	cd "$dir"
+	test -n "$styledir" && loadstyle link ..
 	stagit -u "$baseurl" "$abs"
 }
 
@@ -44,6 +68,7 @@ loadconfig() {
 			(baseurl) baseurl="$val" ;;
 			(repodir) repodir="$val" ;;
 			(hasfile) hasfile="$val" ;;
+			(styledir) styledir="$val" ;;
 			(*) err 'Invalid configuration'
 			esac
 		done < "$rc"
@@ -66,6 +91,7 @@ trap 'rm -f "$err"' EXIT
 	test $# -eq 0 -a -n "$GIT_DIR" &&
 		set -- "$GIT_DIR"
 	unset GIT_DIR
+	index
 	for d in "$@"
 	do
 		repo "$d" || {
@@ -73,7 +99,6 @@ trap 'rm -f "$err"' EXIT
 			echo "$d: Unable to generate" 1>&2
 		}
 	done
-	index
 {
 	exit $status
 } > "$err" 2>&1 || {
