@@ -1,6 +1,0 @@
-stagit-hook
-===========
-
-The stagit-hook project provides a simple post-update hook for
-maintaining [stagit](https://codemadness.org/git/stagit/log.html)(*1*)
-repository pages.
